@@ -1,86 +1,278 @@
 <script>
 /* eslint-disable no-undef */
 import User from "./components/User.vue";
+import Myself from "./components/Myself.vue";
 import io from 'socket.io-client';
-import { ref, onMounted, onBeforeMount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Loader } from "@googlemaps/js-api-loader";
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDrA7hO41vHxBIxUewGFoGFJJQpYTsBiLA';
 
 export default {
+  components: {
+    User, Myself
+  },
+
   setup() {
-    const loader = new Loader({ apiKey : GOOGLE_MAPS_API_KEY })
+    const loader = new Loader({ apiKey : GOOGLE_MAPS_API_KEY });
+
     const mapDiv = ref(null);
-    const users = ref([]);
+    const map = ref(null);
+    
+    const fileList = ref([]);
+    const fileInput = ref(null);
+    const textInput = ref(null);
+    const selectedRecipient = ref(null);
+    const selectedMarker = ref(null);
+
+    const coordinates = ref({longitude: null, latitude: null});
+    const hcoordinates = ref('');
+    const users = ref({});
+    const self = ref({});
+    const markerUserList = ref({});
+    // const markerWidgets = ref([]);
+    let markerWidgets = [];
+
     const socket = io("http://localhost:8080/");
 
-    socket.on('user-update', (data) => {
-      console.log(data);
-      users.value = data;
-    })
+    const sendMessage = () => {
+      const messageContent = textInput.value.value;
+
+      socket.emit('send-message', {
+        sender: self.value.id,
+        recipient: selectedRecipient.value,
+        message: messageContent,
+      });
+      
+      textInput.value.value = '';
+    }
+
+    const sendFiles = () => {
+      const file = fileList.value[0];
+
+      this.socket.emit('send-file', {
+        recipient: selectedRecipient.value,
+        rawFile: file,
+      });
+    }
+
+    const stageFiles = () => {
+      fileList.value = fileInput.value.files;
+    }
+
+    const selectRecipient = (user) => {
+      if (user === self.value.id) {
+        return;
+      }
+
+      selectedRecipient.value = user;
+    }
+
+    const hashCoordinates = (coords) => {
+      return coords.longitude.toString() + coords.latitude.toString();
+    }
+
+    const unhashCoordinates = (hcoords) => {
+      const hcoordsReversed = [...hcoords].reverse().join('');
+      const offset = hcoordsReversed.indexOf('.') + 1;
+
+      const firstDecimalIndex = hcoords.indexOf('.');
+      const lngString = hcoords.substring(0, firstDecimalIndex + offset);
+      const latString = hcoords.substring(firstDecimalIndex + offset, hcoords.length);
+
+      return {
+        longitude: parseFloat(lngString),
+        latitude: parseFloat(latString),
+      }
+    }
+
+    const deleteMarkers = () => {
+      if (markerWidgets.length === 0) return;
+      console.log('d')
+      markerWidgets[0].setMap(null);
+
+      for (const i in markerWidgets) {
+        markerWidgets[i].setMap(null);
+      }
+
+      markerWidgets = [];
+    }
+
+    const renderMarkers = () => {
+      const attachmentMap = map.value;
+      deleteMarkers();
+
+      for (const hcoord in markerUserList.value) {
+        const coord = unhashCoordinates(hcoord);
+
+        const marker = new google.maps.Marker({
+          position: { lat: coord.latitude, lng: coord.longitude },
+          map: attachmentMap,
+        });
+
+        markerWidgets.push(marker);
+      }
+
+      console.log(markerUserList.value);
+    }
+
+    socket.on('init-user', (parcel) => {
+      users.value = parcel.list;
+      markerUserList.value = parcel.markers;
+
+      self.value = {
+        id: parcel.self,
+        name: parcel.list[parcel.self],
+      }
+
+      selectedMarker.value = markerUserList.value[hcoordinates.value];
+      renderMarkers();
+    });
+
+    socket.on('update-users', (updateParcel) => {
+      users.value = updateParcel.list;
+      markerUserList.value = updateParcel.markers;
+      selectedMarker.value = markerUserList.value[hcoordinates.value];
+      renderMarkers();
+    });
+
+    socket.on('receive-file', (file) => {
+      const blob = new Blob([file]);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = 'filename.extension';
+      downloadLink.click();
+
+      URL.revokeObjectURL(downloadLink.href);
+    });
+
+    socket.on('receive-message', (parcel) => {
+      alert(`${users.value[parcel.from]}: ${parcel.message}`)
+    });
 
     onMounted(async () => {
-      await loader.load();
-      const { Map } = await google.maps.importLibrary("maps");
-      new Map(mapDiv.value, {
-        center: { lat: 22.3193, lng: 114.1694 },
-        zoom: 12,
-        mapId: '9fde6adeb966b26',
-      })
-    })
+      try {
+        // const position = await new Promise((resolve, reject) => {
+        //   navigator.geolocation.getCurrentPosition(resolve, reject);
+        // });
 
-    onBeforeMount(async () => {
-      // try {
-      //   const res = await fetch("http://localhost:8080/");
-      //   const d = await res.json();
-      //   this.users = [d.self];
-      // } catch(e) {
-      //   console.error(e); 
-      // }
-    })
+        const x = [
+          {latitude: 22.3193, longitude: 114.1694},
+          {latitude: 23.1291, longitude: 113.2644},
+          {latitude: 22.5429, longitude: 114.0596},
+          // {latitude: 22.3193, longitude: 114.1694},
+          // {latitude: 22.3193, longitude: 114.1694},
+        ];
 
-    return { 
+        coordinates.value = x[Math.floor((Math.random() * 100)) % 3];
+        hcoordinates.value = hashCoordinates(coordinates.value);
+
+        // socket.emit('init-location', hcoordinates.value);
+
+        // coordinates.value = position.coords;
+        // console.log(coordinates.value)
+        await loader.load(); // Load the necessary library
+
+        const { Map } = await google.maps.importLibrary("maps");
+
+        map.value = new Map(mapDiv.value, {
+          center: { lat: coordinates.value.latitude, lng: coordinates.value.longitude },
+          zoom: 12,
+          mapId: '9fde6adeb966b26',
+          mapTypeId: 'roadmap',
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+          zoomControl: true,
+          scaleControl: true,
+          rotateControl: false,
+        });
+
+        // new google.maps.Marker({
+        //   position: { lat: coordinates.value.latitude, lng: coordinates.value.longitude },
+        //   map,
+        // });
+
+        socket.emit('init-location', hcoordinates.value);
+
+      } catch (error) {
+        console.error('Error with geolocation services or library loading:', error);
+      }
+
+    });
+
+    return {
+      sendFiles,
+      sendMessage,
+      stageFiles,
+      selectRecipient,
+      renderMarkers,
+      deleteMarkers,
+
       mapDiv,
       users,
+      self,
+      coordinates,
       socket,
+      fileInput,
+      textInput,
+      selectedRecipient,
+      selectedMarker,
+      fileList,
     }
   },
-
-  components: {
-    User
-  },
-
-  methods: {
-  }
 }
 </script>
 
 <template>
   <div class="app">
     <div class="map-container">
-      <div class="map" ref="mapDiv">
-
-      </div>
+      <div class="map" ref="mapDiv"></div>
     </div>
     <div class="operation-container">
       <div class="user-container">
-        <User class="user-item" v-for="user in users" :uname="user"/>
+        <Myself :selfName="self.name"/>
+        <User 
+          class="user-item" 
+          v-for="userId in selectedMarker"
+          :uname="users[userId]"
+          @click="selectRecipient(userId)"
+          :style="{ backgroundColor: selectedRecipient === userId && selectedRecipient !== self.userId
+            ? 'darkcyan' 
+            : '#0F0F0F' }"
+          />
       </div>
-
       <div class="form-container">
-        suss
+        <form @submit.prevent="sendFiles">
+          <input type="file" ref="fileInput" @change="stageFiles" class="input-field file">
+          <input type="submit" class="input-field submit">
+        </form>
+
+        <form @submit.prevent="sendMessage">
+          <input type="text" ref="textInput" class="input-field text">
+          <input type="submit" class="input-field submit">
+        </form>
+
+        <button @click="deleteMarkers"></button>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
+:root {
+  --darkest: rgb(5, 5, 5);
+  --semi-dark: rgb(15, 15, 15);
+  --light-dark: rgb(22, 22, 22);
+  --aquatic: rgb(0, 166, 207);
+  --light: rgb(255, 255, 255);
+}
 
 .app {
   display: flex;
 
   .map-container {
-    background-color: red;
+    background-color: var(--darkest);
     flex: 3;
     
     .map {
@@ -90,7 +282,7 @@ export default {
 
   .operation-container {
     display: flex;
-    background-color: green;
+    background-color: var(--light-dark);
     flex-direction: column;
     flex: 1;
     align-content: flex-end;
@@ -104,24 +296,39 @@ export default {
       overflow-x: hidden;
 
       .user-item {
-        width: 100%;
         margin-top: 0.5em;
         border-radius: 0.5em;
-        background-color: blue;
+        background-color: var(--semi-dark);
       }
     }
 
     .form-container {
       width: 100%;
-      background-color: purple;
+      background-color: var(--semi-dark);
       flex: 1;
+
+      input[type=file]::-webkit-file-upload-button {
+        background-color: var(--aquatic);
+        border: none;
+        color: var(--light);
+        border-radius: .2em;
+        padding: .5em;
+      }
+
+      .input-field {
+        height: 3em;
+        width: 12em;
+        border-radius: 0.2em;
+        border: none;
+      }
+
+      .submit {
+        background-color: var(--light-dark);
+        border: none;
+        color: var(--light);
+      }
     }
   }
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
 }
 
 </style>
