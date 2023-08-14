@@ -117,6 +117,7 @@ export default {
 
           marker.addListener('click', () => {
             console.log('yay!')
+            selectedMarker.value = markerUserList.value[hcoord];
           });
 
           markerWidgets.push(marker);
