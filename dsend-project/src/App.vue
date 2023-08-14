@@ -14,10 +14,12 @@ export default {
   },
 
   setup() {
-    const loader = new Loader({ apiKey : GOOGLE_MAPS_API_KEY });
+    const loader = new Loader({ 
+      apiKey: GOOGLE_MAPS_API_KEY ,
+      version: 'weekly'
+    });
 
     const mapDiv = ref(null);
-    const map = ref(null);
     
     const fileList = ref([]);
     const fileInput = ref(null);
@@ -30,8 +32,9 @@ export default {
     const users = ref({});
     const self = ref({});
     const markerUserList = ref({});
-    // const markerWidgets = ref([]);
+
     let markerWidgets = [];
+    let map = null;
 
     const socket = io("http://localhost:8080/");
 
@@ -89,7 +92,6 @@ export default {
     const deleteMarkers = () => {
       if (markerWidgets.length === 0) return;
       console.log('d')
-      markerWidgets[0].setMap(null);
 
       for (const i in markerWidgets) {
         markerWidgets[i].setMap(null);
@@ -98,25 +100,30 @@ export default {
       markerWidgets = [];
     }
 
-    const renderMarkers = () => {
-      const attachmentMap = map.value;
-      deleteMarkers();
+    const renderMarkers = async () => {
+      try {
+        const attachmentMap = map;
+        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-      for (const hcoord in markerUserList.value) {
-        const coord = unhashCoordinates(hcoord);
+        deleteMarkers();
 
-        const marker = new google.maps.Marker({
-          position: { lat: coord.latitude, lng: coord.longitude },
-          map: attachmentMap,
-        });
+        for (const hcoord in markerUserList.value) {
+          const coord = unhashCoordinates(hcoord);
 
-        markerWidgets.push(marker);
+          const marker = new AdvancedMarkerElement({
+            position: { lat: coord.latitude, lng: coord.longitude },
+            map: attachmentMap,
+          });
+
+          markerWidgets.push(marker);
+        }
+
+      } catch (error) {
+        console.error('Error with rendering markers: ', error);
       }
-
-      console.log(markerUserList.value);
     }
 
-    socket.on('init-user', (parcel) => {
+    socket.on('init-user', async (parcel) => {
       users.value = parcel.list;
       markerUserList.value = parcel.markers;
 
@@ -126,14 +133,14 @@ export default {
       }
 
       selectedMarker.value = markerUserList.value[hcoordinates.value];
-      renderMarkers();
+      await renderMarkers();
     });
 
-    socket.on('update-users', (updateParcel) => {
+    socket.on('update-users', async (updateParcel) => {
       users.value = updateParcel.list;
       markerUserList.value = updateParcel.markers;
       selectedMarker.value = markerUserList.value[hcoordinates.value];
-      renderMarkers();
+      await renderMarkers();
     });
 
     socket.on('receive-file', (file) => {
@@ -175,7 +182,7 @@ export default {
 
         const { Map } = await google.maps.importLibrary("maps");
 
-        map.value = new Map(mapDiv.value, {
+        map = new Map(mapDiv.value, {
           center: { lat: coordinates.value.latitude, lng: coordinates.value.longitude },
           zoom: 12,
           mapId: '9fde6adeb966b26',

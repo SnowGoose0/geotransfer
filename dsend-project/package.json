@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "github:googlemaps/js-api-loader",
     "socket.io-client": "^4.7.2",
     "vue": "^3.3.4",
     "yarn": "^1.22.19"
