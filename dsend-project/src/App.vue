@@ -115,6 +115,10 @@ export default {
             map: attachmentMap,
           });
 
+          marker.addListener('click', () => {
+            console.log('yay!')
+          });
+
           markerWidgets.push(marker);
         }
 
