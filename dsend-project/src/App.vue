@@ -35,7 +35,7 @@ export default {
     const self = ref({});
     const markerUserList = ref({});
 
-    let markerWidgets = [];
+    const markerWidgets = {};
     let map = null;
     let userPinElement = null;
 
@@ -92,38 +92,45 @@ export default {
       }
     }
 
-    const deleteMarkers = () => {
-      if (markerWidgets.length === 0) return;
-      console.log('d')
+    const cleanseMarkers = () => {
+      if (Object.keys(markerWidgets).length === 0)
+        return;
 
-      for (const i in markerWidgets) {
-        markerWidgets[i].setMap(null);
+      for (const hcoord in markerWidgets) {
+        if (markerUserList.value[hcoord] === undefined) {
+          markerWidgets[hcoord].map = null;
+          delete markerWidgets[hcoord];
+        }
       }
-
-      markerWidgets = [];
     }
 
     const renderMarkers = async () => {
+      cleanseMarkers();
+
       try {
         const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
-        deleteMarkers();
-
         for (const hcoord in markerUserList.value) {
-          const coord = unhashCoordinates(hcoord);
+          if (markerWidgets[hcoord] === undefined) {
+            const coord = unhashCoordinates(hcoord);
 
-          const marker = new AdvancedMarkerElement({
-            position: { lat: coord.latitude, lng: coord.longitude },
-            map: map,
-            content: userPinElement.element,
-          });
+            const marker = new AdvancedMarkerElement({
+              position: { lat: coord.latitude, lng: coord.longitude },
+              map: map,
+              //content: userPinElement.element,
+            });
 
-          marker.addListener('click', () => {
-            console.log('yay!')
-            selectedMarker.value = markerUserList.value[hcoord];
-          });
+            console.log(hcoord);
 
-          markerWidgets.push(marker);
+            marker.addListener('click', () => {
+              console.log('yay!')
+              selectedMarker.value = markerUserList.value[hcoord];
+            });
+
+            //markerWidgets.push(marker);
+            markerWidgets[hcoord] = marker;
+          }
+          
         }
 
       } catch (error) {
@@ -233,7 +240,7 @@ export default {
       stageFiles,
       selectRecipient,
       renderMarkers,
-      deleteMarkers,
+      cleanseMarkers,
 
       mapDiv,
       users,
@@ -279,7 +286,7 @@ export default {
           <input type="submit" class="input-field submit">
         </form>
 
-        <button @click="deleteMarkers"></button>
+        <button @click="cleanseMarkers"></button>
       </div>
     </div>
   </div>
