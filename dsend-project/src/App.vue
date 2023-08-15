@@ -338,6 +338,7 @@ export default {
     .form-container {
       width: 100%;
       background-color: var(--semi-dark);
+      padding: 1em;
       flex: 1;
 
       input[type=file]::-webkit-file-upload-button {
@@ -348,11 +349,18 @@ export default {
         padding: .5em;
       }
 
+      input[type=text] {
+        background-color: var(--light-dark);
+        color: var(--light);
+        padding-left: 1em;
+        border: 0em;
+      }
+
       .input-field {
         height: 3em;
-        width: 12em;
+        width: 6em;
         border-radius: 0.2em;
-        border: none;
+        outline: none;
       }
 
       .submit {
