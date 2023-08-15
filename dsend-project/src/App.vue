@@ -3,8 +3,9 @@
 import User from "./components/User.vue";
 import Myself from "./components/Myself.vue";
 import io from 'socket.io-client';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeMount } from 'vue'
 import { Loader } from "@googlemaps/js-api-loader";
+import userIconSvg from './assets/user-marker.svg'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDrA7hO41vHxBIxUewGFoGFJJQpYTsBiLA';
 
@@ -20,6 +21,7 @@ export default {
     });
 
     const mapDiv = ref(null);
+    let userIcon;
     
     const fileList = ref([]);
     const fileInput = ref(null);
@@ -35,6 +37,7 @@ export default {
 
     let markerWidgets = [];
     let map = null;
+    let userPinElement = null;
 
     const socket = io("http://localhost:8080/");
 
@@ -102,8 +105,7 @@ export default {
 
     const renderMarkers = async () => {
       try {
-        const attachmentMap = map;
-        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+        const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
         deleteMarkers();
 
@@ -112,7 +114,8 @@ export default {
 
           const marker = new AdvancedMarkerElement({
             position: { lat: coord.latitude, lng: coord.longitude },
-            map: attachmentMap,
+            map: map,
+            content: userPinElement.element,
           });
 
           marker.addListener('click', () => {
@@ -159,7 +162,13 @@ export default {
     });
 
     socket.on('receive-message', (parcel) => {
-      alert(`${users.value[parcel.from]}: ${parcel.message}`)
+      alert(`${users.value[parcel.from]}: ${parcel.message}`);
+    });
+
+    onBeforeMount(() => {
+      userIcon = document.createElement('img');
+      userIcon.className = 'user-icon-glyph'
+      userIcon.src = userIconSvg;
     });
 
     onMounted(async () => {
@@ -186,6 +195,7 @@ export default {
         await loader.load(); // Load the necessary library
 
         const { Map } = await google.maps.importLibrary("maps");
+        const { PinElement } = await google.maps.importLibrary("marker");
 
         map = new Map(mapDiv.value, {
           center: { lat: coordinates.value.latitude, lng: coordinates.value.longitude },
@@ -204,6 +214,10 @@ export default {
         //   position: { lat: coordinates.value.latitude, lng: coordinates.value.longitude },
         //   map,
         // });
+
+        userPinElement = new PinElement({
+          glyph: userIcon,
+        });
 
         socket.emit('init-location', hcoordinates.value);
 
@@ -340,6 +354,11 @@ export default {
         color: var(--light);
       }
     }
+  }
+
+  .user-icon-glyph {
+    height: 30px;
+    width: 30px;
   }
 }
 
