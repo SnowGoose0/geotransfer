@@ -44,6 +44,8 @@ export default {
     const sendMessage = () => {
       const messageContent = textInput.value.value;
 
+      if (messageContent == '' || messageContent == null) return;
+
       socket.emit('send-message', {
         sender: self.value.id,
         recipient: selectedRecipient.value,
@@ -56,7 +58,9 @@ export default {
     const sendFiles = () => {
       const file = fileList.value[0];
 
-      this.socket.emit('send-file', {
+      if (file == undefined) return;
+
+      socket.emit('send-file', {
         recipient: selectedRecipient.value,
         rawFile: file,
       });
@@ -186,16 +190,16 @@ export default {
 
         const x = [
           {latitude: 22.3193, longitude: 114.1694},
-          {latitude: 23.1291, longitude: 113.2644},
-          {latitude: 22.5429, longitude: 114.0596},
-          // {latitude: 22.3193, longitude: 114.1694},
-          // {latitude: 22.3193, longitude: 114.1694},
+          // {latitude: 23.1291, longitude: 113.2644},
+          // {latitude: 22.5429, longitude: 114.0596},
+          {latitude: 22.3193, longitude: 114.1694},
+          {latitude: 22.3193, longitude: 114.1694},
         ];
 
         coordinates.value = x[Math.floor((Math.random() * 100)) % 3];
         hcoordinates.value = hashCoordinates(coordinates.value);
 
-        // socket.emit('init-location', hcoordinates.value);
+        socket.emit('init-location', hcoordinates.value);
 
         // coordinates.value = position.coords;
         // console.log(coordinates.value)
@@ -232,7 +236,7 @@ export default {
           glyph: userIcon,
         });
 
-        socket.emit('init-location', hcoordinates.value);
+        // socket.emit('init-location', hcoordinates.value);
 
       } catch (error) {
         console.error('Error with geolocation services or library loading:', error);
@@ -283,18 +287,18 @@ export default {
       </div>
       <div class="form-container">
         <form @submit.prevent="sendFiles">
-          <input type="file" ref="fileInput" @change="stageFiles" class="input-field file">
-          <input type="submit" class="input-button submit" value="Send"> 
-        </form>
-
-        <form @submit.prevent="sendMessage">
-          <div class="message-box">
-            <input type="text" ref="textInput" class="input-field text">
-            <input type="submit" class="input-button submit" id="msg-send" value="Send">
+          <div class="box" id="file-box">
+            <input type="file" ref="fileInput" @change="stageFiles" class="input-field file">
+            <input type="submit" class="input-button submit-base" id="file-submit" value="Send"> 
           </div>
         </form>
 
-        <button @click="cleanseMarkers"></button>
+        <form @submit.prevent="sendMessage">
+          <div class="box" id="text-box">
+            <input type="text" ref="textInput" class="input-field text">
+            <input type="submit" class="input-button submit-base" id="msg-submit" value="Send">
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -305,6 +309,7 @@ export default {
   --darkest: rgb(5, 5, 5);
   --semi-dark: rgb(15, 15, 15);
   --light-dark: rgb(22, 22, 22);
+  --light-light-dark: rgb(75, 75, 75);
   --aquatic: rgb(0, 166, 207);
   --light: rgb(255, 255, 255);
 }
@@ -337,8 +342,8 @@ export default {
       overflow-x: hidden;
 
       .user-item {
-        margin-top: 0.5rem;
-        border-radius: 0.5rem;
+        margin-top: .5rem;
+        border-radius: .5rem;
         background-color: var(--semi-dark);
       }
     }
@@ -349,46 +354,69 @@ export default {
       padding: 1rem;
       flex: 1;
 
-      input[type=file]::-webkit-file-upload-button {
-        background-color: var(--aquatic);
-        border: none;
-        color: var(--light);
-        border-radius: .2rem;
-        padding: .5rem;
-      }
-
-      input[type=file] {
-        width: 100%;
-      }
-
       .input-field {
-        height: 3rem;
         width: 6rem;
-        border-radius: 0.2rem;
+        border-radius: .2rem;
         outline: none;
       }
 
-      .submit {
+      .submit-base {
         background-color: var(--light-dark);
-        padding: 1em;
+        padding: 1rem;
         border-radius: 1rem;
         border: none;
         color: var(--light);
       }
 
-      .message-box {
+      .box {
         width: 100%;
+        padding: .1rem;
+        background-color: var(--light-dark);
+        border: solid;
+        border-radius: .5rem;
+        border-color: var(--light-light-dark);
+      }
 
+      #file-box {
+        margin-bottom: 1rem;
+
+        input[type=file]::-webkit-file-upload-button {
+          height: 3.5rem;
+          background-color: var(--semi-dark);
+          border: none;
+          color: var(--light);
+          border-radius: .5rem;
+          padding: .6rem;
+          margin-left: .5rem;
+        }
+
+        input[type=file] {
+          width: 70%;
+        }
+
+        #file-submit {
+          width: 30%;
+          height: 5rem;
+          border-radius: 0%;
+          background-color: var(--semi-dark);
+        }
+      }
+
+      #text-box {
         input[type=text] {
+          height: 3rem;
           width: 70%;
           background-color: var(--light-dark);
           color: var(--light);
-          padding-left: 1rem;
+          padding-left: .5rem;
           border: 0rem;
         }
 
-        #msg-send {
+        #msg-submit {
           width: 30%;
+          height: 3rem;
+          border-radius: 0%;
+          background-color: var(--semi-dark);
         }
       }
     }
@@ -399,5 +427,4 @@ export default {
     width: 30px;
   }
 }
-
 </style>
