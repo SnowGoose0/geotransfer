@@ -201,7 +201,10 @@ export default {
         // console.log(coordinates.value)
         await loader.load(); // Load the necessary library
 
-        const { Map } = await google.maps.importLibrary("maps");
+
+
+
+        /* const { Map } = await google.maps.importLibrary("maps");
         const { PinElement } = await google.maps.importLibrary("marker");
 
         map = new Map(mapDiv.value, {
@@ -215,7 +218,10 @@ export default {
           zoomControl: true,
           scaleControl: true,
           rotateControl: false,
-        });
+        }); */
+
+
+
 
         // new google.maps.Marker({
         //   position: { lat: coordinates.value.latitude, lng: coordinates.value.longitude },
@@ -278,12 +284,14 @@ export default {
       <div class="form-container">
         <form @submit.prevent="sendFiles">
           <input type="file" ref="fileInput" @change="stageFiles" class="input-field file">
-          <input type="submit" class="input-field submit">
+          <input type="submit" class="input-button submit" value="Send"> 
         </form>
 
         <form @submit.prevent="sendMessage">
-          <input type="text" ref="textInput" class="input-field text">
-          <input type="submit" class="input-field submit">
+          <div class="message-box">
+            <input type="text" ref="textInput" class="input-field text">
+            <input type="submit" class="input-button submit" id="msg-send" value="Send">
+          </div>
         </form>
 
         <button @click="cleanseMarkers"></button>
@@ -329,8 +337,8 @@ export default {
       overflow-x: hidden;
 
       .user-item {
-        margin-top: 0.5em;
-        border-radius: 0.5em;
+        margin-top: 0.5rem;
+        border-radius: 0.5rem;
         background-color: var(--semi-dark);
       }
     }
@@ -338,35 +346,50 @@ export default {
     .form-container {
       width: 100%;
       background-color: var(--semi-dark);
-      padding: 1em;
+      padding: 1rem;
       flex: 1;
 
       input[type=file]::-webkit-file-upload-button {
         background-color: var(--aquatic);
         border: none;
         color: var(--light);
-        border-radius: .2em;
-        padding: .5em;
+        border-radius: .2rem;
+        padding: .5rem;
       }
 
-      input[type=text] {
-        background-color: var(--light-dark);
-        color: var(--light);
-        padding-left: 1em;
-        border: 0em;
+      input[type=file] {
+        width: 100%;
       }
 
       .input-field {
-        height: 3em;
-        width: 6em;
-        border-radius: 0.2em;
+        height: 3rem;
+        width: 6rem;
+        border-radius: 0.2rem;
         outline: none;
       }
 
       .submit {
         background-color: var(--light-dark);
+        padding: 1em;
+        border-radius: 1rem;
         border: none;
         color: var(--light);
+      }
+
+      .message-box {
+        width: 100%;
+
+        input[type=text] {
+          width: 70%;
+          background-color: var(--light-dark);
+          color: var(--light);
+          padding-left: 1rem;
+          border: 0rem;
+        }
+
+        #msg-send {
+          width: 30%;
+        }
       }
     }
   }
