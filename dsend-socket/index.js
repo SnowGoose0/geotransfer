@@ -2,10 +2,14 @@ const express = require("express");
 const cors = require('cors');
 const http = require('http');
 const ioSocket = require('socket.io')
-const identifiers = require("./res/id.json");
+const spareIdentifiers = require("./res/id.json");
 
 const app = express();
 const server = http.createServer(app);
+const portNumber = 8080;
+
+const users = {};
+const markers = {};
 
 const io = ioSocket(server, {
     maxHttpBufferSize: 5e8,
@@ -16,23 +20,11 @@ const io = ioSocket(server, {
     }
 });
 
-const portNumber = 8080;
-
-let users = {};
-let markers = {};
-
-app.get("/", (req, res) => {
-    console.log("Server: A user has connected");
-
-    res.json({
-        self: username
-    });
-})
 
 io.on('connection', (socket) => {
     console.log('Socket: a user has connected');
 
-    const username = identifiers.names[Math.floor(Math.random() * identifiers.names.length)];
+    const username = spareIdentifiers.names.shift();
     let markerIndex;
 
     socket.on('init-location', (coords) => {
@@ -88,7 +80,8 @@ io.on('connection', (socket) => {
             console.log('Server: a marker has been cleared')
             delete markers[markerIndex];
         }
-
+        
+        spareIdentifiers.names.push(username);
 
         socket.broadcast.emit('update-users', {
             list: users,

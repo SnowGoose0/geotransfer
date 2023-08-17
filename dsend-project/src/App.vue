@@ -1,7 +1,7 @@
 <script>
 /* eslint-disable no-undef */
-import User from "./components/User.vue";
-import Myself from "./components/Myself.vue";
+import User from "./components/PeerCard.vue";
+import Myself from "./components/SelfCard.vue";
 import io from 'socket.io-client';
 import { ref, onMounted, onBeforeMount } from 'vue'
 import { Loader } from "@googlemaps/js-api-loader";
@@ -133,8 +133,7 @@ export default {
 
             //markerWidgets.push(marker);
             markerWidgets[hcoord] = marker;
-          }
-          
+          }          
         }
 
       } catch (error) {
@@ -304,6 +303,10 @@ export default {
   </div>
 </template>
 
+<!-- <style>
+  @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap');
+</style> -->
+
 <style lang="scss">
 :root {
   --darkest: rgb(5, 5, 5);
@@ -312,6 +315,12 @@ export default {
   --light-light-dark: rgb(75, 75, 75);
   --aquatic: rgb(0, 166, 207);
   --light: rgb(255, 255, 255);
+
+  --fonts: Helvetica, 'Courier New', monospace;
+}
+
+* {
+  font-family: var(--fonts);
 }
 
 .app {
@@ -388,6 +397,7 @@ export default {
           border-radius: .5rem;
           padding: .6rem;
           margin-left: .5rem;
+          font-family: var(--fonts);
         }
 
         input[type=file] {
