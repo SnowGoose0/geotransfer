@@ -308,6 +308,8 @@ export default {
 </style> -->
 
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
 :root {
   --darkest: rgb(5, 5, 5);
   --semi-dark: rgb(15, 15, 15);
@@ -316,7 +318,7 @@ export default {
   --aquatic: rgb(0, 166, 207);
   --light: rgb(255, 255, 255);
 
-  --fonts: Helvetica, 'Courier New', monospace;
+  --fonts: 'Roboto Mono', Helvetica, 'Courier New', monospace;
 }
 
 * {
