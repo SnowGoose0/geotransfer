@@ -1,7 +1,7 @@
 <script>
 /* eslint-disable no-undef */
-import User from "./components/PeerCard.vue";
-import Myself from "./components/SelfCard.vue";
+import PeerCard from "./components/PeerCard.vue";
+import SelfCard from "./components/SelfCard.vue";
 import io from 'socket.io-client';
 import { ref, onMounted, onBeforeMount } from 'vue'
 import { Loader } from "@googlemaps/js-api-loader";
@@ -11,7 +11,7 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyDrA7hO41vHxBIxUewGFoGFJJQpYTsBiLA';
 
 export default {
   components: {
-    User, Myself
+    User: PeerCard, Myself: SelfCard
   },
 
   setup() {
