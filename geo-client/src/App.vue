@@ -168,7 +168,6 @@ export default {
     });
 
     socket.on('receive-message', (messageParcel) => {
-      // alert(`${users.value[parcel.from]}: ${parcel.message}`);
       receivedMessage.value = {
         message: messageParcel.message,
         sender: activeUserList.value[messageParcel.from],
@@ -183,10 +182,10 @@ export default {
 
         const x = [
           {latitude: 22.3193, longitude: 114.1694},
-          {latitude: 23.1291, longitude: 113.2644},
-          {latitude: 22.5429, longitude: 114.0596},
-          // {latitude: 22.3193, longitude: 114.1694},
-          // {latitude: 22.3193, longitude: 114.1694},
+          // {latitude: 23.1291, longitude: 113.2644},
+          // {latitude: 22.5429, longitude: 114.0596},
+          {latitude: 22.3193, longitude: 114.1694},
+          {latitude: 22.3193, longitude: 114.1694},
         ];
 
         userCoordinates.value = x[Math.floor((Math.random() * 100)) % 3];
@@ -194,7 +193,10 @@ export default {
 
         // coordinates.value = position.coords;
         // console.log(coordinates.value)
-        await loader.load(); // Load the necessary library
+
+        socket.emit('init-location', userHashedCoordinates.value);
+
+        await loader.load();
 
         const { Map } = await google.maps.importLibrary("maps");
 
@@ -211,7 +213,7 @@ export default {
           rotateControl: false,
         });
 
-        socket.emit('init-location', userHashedCoordinates.value);
+        // socket.emit('init-location', userHashedCoordinates.value);
 
       } catch (error) {
         console.error('Error with geolocation services or library loading:', error);

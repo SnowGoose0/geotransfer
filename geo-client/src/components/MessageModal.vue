@@ -39,10 +39,14 @@
 
 <style lang="scss" scoped>
 .pop-up-container {
-	display: flex;
-	width: 100%;
-	padding: 1em;
-	background-color: var(--darkest);
+	// display: flex;
+	width: 25%;
+	max-height: 50%;
+	padding: 1rem;
+	// background-color: var(--darkest);
+	background-color: red;
+	margin: 1rem;
+	border-radius: 1rem;
 	position: absolute;
 	z-index: 10;
 
