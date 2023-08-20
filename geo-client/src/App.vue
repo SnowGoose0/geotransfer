@@ -42,10 +42,7 @@ export default {
     const socket = ioClient("http://localhost:8080/");
 
     const selectRecipient = (user) => {
-      if (user === selfInfo.value.id) {
-        return;
-      }
-
+      if (user === selfInfo.value.id) return;
       selectedRecipient.value = user;
     }
 
@@ -221,7 +218,7 @@ export default {
         <SelfCard :selfName="selfInfo.name"/>
         
         <PeerCard 
-          class="user-item" 
+          class="user-items" 
           v-for="userId in selectedMarker"
           :uname="activeUserList[userId]"
           @click="selectRecipient(userId)"

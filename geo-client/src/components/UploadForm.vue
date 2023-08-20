@@ -1,5 +1,7 @@
 <script>
-import { ref, toRef } from 'vue';
+import { ref, toRef, watch } from 'vue';
+
+const MAX_MESSAGE_LENGTH = 100;
 
 export default {
 	props: {
@@ -10,7 +12,8 @@ export default {
 
 	setup(props) {
 		const fileInputElement = ref(null);
-    const textInputElement = ref(null);
+    const textInput = ref(null);
+		const textInputCharCount = ref(MAX_MESSAGE_LENGTH);
 		const fileList = ref([]);
 
 		const socket = props.socket;
@@ -18,17 +21,19 @@ export default {
 		const selfInfo = toRef(props, 'selfInfo');
 
 		const sendMessage = () => {
-      const messageContent = textInputElement.value.value;
+			if (textInputCharCount.value < 0) return;
+
+      const messageContent = textInput.value;
 
       if (messageContent == "" || messageContent == null) return;
-			console.log(recipient)
+
       socket.emit("send-message", {
         sender: selfInfo.value.id,
         recipient: recipient.value,
         message: messageContent,
       });
       
-      textInputElement.value.value = "";
+      textInput.value = "";
     }
 
     const sendFiles = () => {
@@ -46,12 +51,29 @@ export default {
       fileList.value = fileInputElement.value.files;
     }
 
+		const stageText = () => {
+			const textInputLength = textInput.value.length;
+			textInputCharCount.value = MAX_MESSAGE_LENGTH - textInputLength;
+		}
+
+		watch(() => textInputCharCount.value, (currentCharCount) => {
+			const textInputElement = document.getElementById('charcnt');
+	
+			if (currentCharCount < 0) {
+				textInputElement.className = 'character-counter-exc';
+			} else {
+				textInputElement.className = 'character-counter-reg';
+			}
+		});
+
 		return {
 			sendMessage,
 			sendFiles,
 			stageFiles,
+			stageText,
 			fileInputElement,
-			textInputElement,
+			textInput,
+			textInputCharCount,
 		}
 	}
 }
@@ -68,7 +90,10 @@ export default {
 
 		<form @submit.prevent="sendMessage">
 			<div class="box" id="text-box">
-				<input type="text" ref="textInputElement" class="input-field text">
+				<input v-model="textInput" @input="stageText" class="input-field text" placeholder="Send a message">
+				<h6 class="character-counter-reg" id="charcnt">
+					{{ textInputCharCount }}
+				</h6>
 				<input type="submit" class="input-button submit-base" id="msg-submit" value="Send">
 			</div>
 		</form>
@@ -132,9 +157,26 @@ export default {
 		}
 
 		#text-box {
-			input[type=text] {
+			display: flex;
+
+			h6 {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: 10%;
+			}
+
+			.character-counter-exc {
+				color: var(--error);
+			}
+
+			.character-counter-reg {
+				color: var(--light-light-dark);
+			}
+
+			.text-input, .text {
 				height: 3rem;
-				width: 70%;
+				width: 60%;
 				background-color: var(--light-dark);
 				color: var(--light);
 				padding-left: .5rem;

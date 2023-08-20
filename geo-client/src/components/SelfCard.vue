@@ -21,6 +21,7 @@ export default {
     padding: 1.5rem;
 
     .identify-message {
+      color: var(--light-light-dark);
       margin-bottom: 0.5rem;
     }
 
