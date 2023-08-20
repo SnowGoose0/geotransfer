@@ -1,17 +1,19 @@
 <script>
 /* eslint-disable no-undef */
-import PeerCard from "./components/PeerCard.vue";
-import SelfCard from "./components/SelfCard.vue";
-import MessageModal from "./components/MessageModal.vue";
+import PeerCard from './components/PeerCard.vue';
+import SelfCard from './components/SelfCard.vue';
+import MessageCard from './components/MessageCard.vue';
+import UploadForm from './components/UploadForm.vue';
+
 import ioClient from 'socket.io-client';
 import { ref, onMounted } from 'vue'
-import { Loader } from "@googlemaps/js-api-loader";
+import { Loader } from '@googlemaps/js-api-loader';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDrA7hO41vHxBIxUewGFoGFJJQpYTsBiLA';
 
 export default {
   components: {
-    PeerCard, SelfCard, MessageModal,
+    PeerCard, SelfCard, MessageCard, UploadForm,
   },
 
   setup() {
@@ -27,7 +29,6 @@ export default {
     const selectedRecipient = ref(null);
     const selectedMarker = ref(null);
     const receivedMessage = ref({});
-    const fileList = ref([]);
 
     const userCoordinates = ref({longitude: null, latitude: null});
     const userHashedCoordinates = ref('');
@@ -39,35 +40,6 @@ export default {
     let map = null;
 
     const socket = ioClient("http://localhost:8080/");
-
-    const sendMessage = () => {
-      const messageContent = textInputElement.value.value;
-
-      if (messageContent == '' || messageContent == null) return;
-
-      socket.emit('send-message', {
-        sender: selfInfo.value.id,
-        recipient: selectedRecipient.value,
-        message: messageContent,
-      });
-      
-      textInputElement.value.value = '';
-    }
-
-    const sendFiles = () => {
-      const file = fileList.value[0];
-
-      if (file == undefined) return;
-
-      socket.emit('send-file', {
-        recipient: selectedRecipient.value,
-        rawFile: file,
-      });
-    }
-
-    const stageFiles = () => {
-      fileList.value = fileInputElement.value.files;
-    }
 
     const selectRecipient = (user) => {
       if (user === selfInfo.value.id) {
@@ -222,9 +194,6 @@ export default {
     });
 
     return {
-      sendFiles,
-      sendMessage,
-      stageFiles,
       selectRecipient,
 
       mapElement,
@@ -235,6 +204,7 @@ export default {
       selectedRecipient,
       selectedMarker,
       receivedMessage,
+      socket,
     }
   },
 }
@@ -242,7 +212,7 @@ export default {
 
 <template>
   <div class="app">
-    <MessageModal :message="receivedMessage.message" :sender="receivedMessage.sender"/>
+    <MessageCard :message="receivedMessage.message" :sender="receivedMessage.sender"/>
     <div class="map-container">
       <div class="map" ref="mapElement"></div>
     </div>
@@ -258,24 +228,14 @@ export default {
           :style="{ backgroundColor: selectedRecipient === userId && selectedRecipient !== selfInfo.userId
             ? 'darkcyan' 
             : '#0F0F0F' }"
-          />
+        />
 
       </div>
-      <div class="form-container">
-        <form @submit.prevent="sendFiles">
-          <div class="box" id="file-box">
-            <input type="file" ref="fileInputElement" @change="stageFiles" class="input-field file">
-            <input type="submit" class="input-button submit-base" id="file-submit" value="Send"> 
-          </div>
-        </form>
-
-        <form @submit.prevent="sendMessage">
-          <div class="box" id="text-box">
-            <input type="text" ref="textInputElement" class="input-field text">
-            <input type="submit" class="input-button submit-base" id="msg-submit" value="Send">
-          </div>
-        </form>
-      </div>
+      <UploadForm
+        :socket="socket"
+        :recipient="selectedRecipient"
+        :selfInfo="selfInfo"
+      />
     </div>
   </div>
 </template>

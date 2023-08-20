@@ -59,6 +59,8 @@ io.on('connection', (socket) => {
   socket.on('send-message', (package) => {
     const recipient = package.recipient;
 
+    console.log(recipient);
+
     io.to(recipient).emit('receive-message', {
       from: package.sender,
       message: package.message,

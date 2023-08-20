@@ -32,7 +32,11 @@
 
 <template>
 	<div class="pop-up-container" v-if="showMessage">
-		<h3 class="pop-up-message" @change="newMessage">{{ sender }}: {{ message }}</h3>
+		<h3 class="pop-up-message" @change="newMessage">
+			<span class="sender">
+				{{ sender }}
+			</span>
+			: {{ message }}</h3>
 		<button class="close-pop-up" @click="showMessage = false">Close</button>
 	</div>
 </template>
@@ -43,20 +47,24 @@
 	width: 25%;
 	max-height: 50%;
 	padding: 1rem;
-	// background-color: var(--darkest);
-	background-color: red;
+	background-color: var(--semi-dark);
 	margin: 1rem;
 	border-radius: 1rem;
 	position: absolute;
 	z-index: 10;
 
 	.pop-up-message {
+		
+		.sender {
+			color: var(--aquatic);
+		}
+
 		padding: .5rem;
 	}
 
 	.close-pop-up {
 		background-color: var(--light-dark);
-		padding: .5rem;
+		padding: .75rem;
 		border-radius: 1rem;
 		border: none;
 		color: var(--light);
