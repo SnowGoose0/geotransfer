@@ -1,7 +1,7 @@
 <script>
 import { ref, toRef, watch } from 'vue';
 
-const MAX_MESSAGE_LENGTH = 100;
+const MAX_MESSAGE_LENGTH = 200;
 
 export default {
 	props: {
