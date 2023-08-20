@@ -52,12 +52,11 @@
   z-index: 10;
 
   .pop-up-message {
+    padding: .5rem;
     
     .sender {
       color: var(--aquatic);
     }
-
-    padding: .5rem;
   }
 
   .close-pop-up {
