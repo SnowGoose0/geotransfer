@@ -34,6 +34,7 @@ export default {
       });
       
       textInput.value = "";
+			textInputCharCount.value = MAX_MESSAGE_LENGTH;
     }
 
     const sendFiles = () => {
@@ -163,7 +164,7 @@ export default {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				width: 10%;
+				width: 15%;
 			}
 
 			.character-counter-exc {
@@ -176,7 +177,7 @@ export default {
 
 			.text-input, .text {
 				height: 3rem;
-				width: 60%;
+				width: 55%;
 				background-color: var(--light-dark);
 				color: var(--light);
 				padding-left: .5rem;

@@ -16,3 +16,7 @@
   margin: 0 auto;
   font-weight: normal;
 }
+
+* {
+  font-family: var(--fonts);
+}

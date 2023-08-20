@@ -15,9 +15,11 @@ export default {
 <style lang="scss">
   .user {
     text-align: center;
-    margin: 0.5em 1em 0.5em 1em;
+    margin: .5rem 1rem .5rem 1rem;
+    border-radius: .5rem;
+
     h3 {
-      padding: 0.5em;
+      padding: .5rem;
       color: var(--light);
     }
   }

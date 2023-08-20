@@ -240,10 +240,6 @@ export default {
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 
-* {
-  font-family: var(--fonts);
-}
-
 .app {
   display: flex;
 
