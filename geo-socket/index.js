@@ -11,6 +11,10 @@ const portNumber = 8080;
 const users = {};
 const markers = {};
 
+app.get('/', (req, res) => {
+  res.write('<h1>To err is human</h1>')
+});
+
 const io = ioSocket(server, {
   maxHttpBufferSize: 5e8,
   cors: {
@@ -19,7 +23,6 @@ const io = ioSocket(server, {
     methods: ["GET", "POST"],
   }
 });
-
 
 io.on('connection', (socket) => {
   console.log('Socket: a user has connected');
