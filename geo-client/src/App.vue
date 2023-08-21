@@ -20,7 +20,6 @@ export default {
   setup() {
     const loader = new Loader({ 
       apiKey: GOOGLE_MAPS_API_KEY ,
-      version: 'weekly'
     });
 
     const mapElement = ref(null);
