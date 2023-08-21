@@ -4,6 +4,7 @@ import PeerCard from './components/PeerCard.vue';
 import SelfCard from './components/SelfCard.vue';
 import MessageCard from './components/MessageCard.vue';
 import UploadForm from './components/UploadForm.vue';
+import glyphSvg from './assets/user-marker.svg';
 
 import ioClient from 'socket.io-client';
 import { ref, onMounted } from 'vue'
@@ -70,7 +71,10 @@ export default {
 
       for (const hcoord in markerWidgets) {
         if (markerUserList.value[hcoord] === undefined) {
-          markerWidgets[hcoord].map = null;
+          markerWidgets[hcoord].marker.map = null; 
+          markerWidgets[hcoord].glyphElement.remove();
+          markerWidgets[hcoord].glyphPinElement = null;
+
           delete markerWidgets[hcoord];
         }
       }
@@ -85,11 +89,18 @@ export default {
         for (const hcoord in markerUserList.value) {
           if (markerWidgets[hcoord] === undefined) {
             const coord = unhashCoordinates(hcoord);
+            const glyphIcon = document.createElement('img');
+            glyphIcon.src = glyphSvg;
+            glyphIcon.style.height = '30px';
+
+            const pin = new PinElement({
+              glyph: glyphIcon,
+            });
 
             const marker = new AdvancedMarkerElement({
               position: { lat: coord.latitude, lng: coord.longitude },
               map: map,
-              //content: userPinElement.element,
+              content: pin.element,
             });
 
             marker.addListener('click', () => {
@@ -97,7 +108,11 @@ export default {
               selectedMarker.value = markerUserList.value[hcoord];
             });
 
-            markerWidgets[hcoord] = marker;
+            markerWidgets[hcoord] = {
+              marker: marker,
+              glyphElement: glyphIcon,
+              glyphPinElement: pin,
+            };
           }          
         }
 
@@ -151,10 +166,10 @@ export default {
 
         const x = [
           {latitude: 22.3193, longitude: 114.1694},
-          // {latitude: 23.1291, longitude: 113.2644},
-          // {latitude: 22.5429, longitude: 114.0596},
-          {latitude: 22.3193, longitude: 114.1694},
-          {latitude: 22.3193, longitude: 114.1694},
+          {latitude: 23.1291, longitude: 113.2644},
+          {latitude: 22.5429, longitude: 114.0596},
+          // {latitude: 22.3193, longitude: 114.1694},
+          // {latitude: 22.3193, longitude: 114.1694},
         ];
 
         userCoordinates.value = x[Math.floor((Math.random() * 100)) % 3];
