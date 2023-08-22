@@ -1,8 +1,12 @@
 <script>
 /* eslint-disable no-undef */
+import { ref, onMounted } from 'vue'
+import { Loader } from '@googlemaps/js-api-loader';
+
 import PeerCard from './components/PeerCard.vue';
 import SelfCard from './components/SelfCard.vue';
 import MessageCard from './components/MessageCard.vue';
+import FileCard from './components/FileCard.vue';
 import UploadForm from './components/UploadForm.vue';
 import RotationPage from './components/RotationPage.vue';
 
@@ -11,14 +15,17 @@ import { useOrientation } from './Orientation.js'
 import glyphSvg from './assets/user-marker.svg';
 
 import ioClient from 'socket.io-client';
-import { ref, onMounted } from 'vue'
-import { Loader } from '@googlemaps/js-api-loader';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDrA7hO41vHxBIxUewGFoGFJJQpYTsBiLA';
 
 export default {
   components: {
-    PeerCard, SelfCard, MessageCard, UploadForm, RotationPage,
+    PeerCard, 
+    SelfCard,
+    MessageCard, 
+    FileCard, 
+    UploadForm, 
+    RotationPage,
   },
 
   setup() {
@@ -29,6 +36,7 @@ export default {
     const { isDeviceMobile, isOrientationVertical } = useOrientation();
 
     const mapElement = ref(null);
+    const downloadLinkElement = ref(null);
     const fileInputElement = ref(null);
     const textInputElement = ref(null);
 
@@ -147,13 +155,13 @@ export default {
     });
 
     socket.on('receive-file', (fileParcel) => {
-      const blob = new Blob([fileParcel]);
-      const downloadLink = document.createElement('a');
-      downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = 'filename.extension';
-      downloadLink.click();
+      const fileBlob = new Blob([fileParcel]);
+      const dlElement = document.createElement('a');
 
-      URL.revokeObjectURL(downloadLink.href);
+      dlElement.href = URL.createObjectURL(fileBlob);
+      dlElement.download = 'filename.extension';
+      
+      downloadLinkElement.value = dlElement;
     });
 
     socket.on('receive-message', (messageParcel) => {
@@ -220,6 +228,7 @@ export default {
       mapElement,
       fileInputElement,
       textInputElement,
+      downloadLinkElement,
       socket,
       activeUserList,
       selfInfo,
@@ -235,6 +244,7 @@ export default {
   <RotationPage v-if="isDeviceMobile && isOrientationVertical"/>
   <div class="app">
     <MessageCard :message="receivedMessage.message" :sender="receivedMessage.sender"/>
+    <FileCard :fileLinkElement="downloadLinkElement" :sender="'Wonhee'" @delete-file-element="downloadLinkElement = null"/>
     <div class="map-container">
       <div class="map" ref="mapElement"></div>
     </div>
