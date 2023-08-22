@@ -116,8 +116,8 @@ export default {
 
     .submit-base {
       background-color: var(--light-dark);
+      text-align: center;
       padding: 1rem;
-      border-radius: 1rem;
       border: none;
       color: var(--light);
     }
@@ -176,7 +176,7 @@ export default {
       }
 
       .text-input, .text {
-        height: 3rem;
+        height: 5rem;
         width: 55%;
         background-color: var(--light-dark);
         color: var(--light);
@@ -186,8 +186,7 @@ export default {
 
       #msg-submit {
         width: 30%;
-        height: 1rem;
-        border-radius: 0%;
+        height: 5rem;
         background-color: var(--semi-dark);
       }
     }

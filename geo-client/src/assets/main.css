@@ -12,6 +12,32 @@
   --fonts: 'Roboto Mono', Helvetica, 'Courier New', monospace;
 }
 
+@media (max-width: 768px) {
+  html {
+    font-size: 7px;
+  }
+
+  input {
+    font-size: 8px;
+  }
+
+  h6 {
+    font-size: 5px;
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 1025px) {
+  html {
+    font-size: 12px;
+  }
+}
+
 #app {
   margin: 0 auto;
   font-weight: normal;
