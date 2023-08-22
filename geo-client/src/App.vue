@@ -39,7 +39,7 @@ export default {
     const markerWidgets = {};
     let map = null;
 
-    const socket = ioClient("http://localhost:8080/");
+    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR);
 
     const selectRecipient = (user) => {
       if (user === selfInfo.value.id) return;
@@ -167,6 +167,7 @@ export default {
           {latitude: 22.3193, longitude: 114.1694},
           {latitude: 23.1291, longitude: 113.2644},
           {latitude: 22.5429, longitude: 114.0596},
+
           // {latitude: 22.3193, longitude: 114.1694},
           // {latitude: 22.3193, longitude: 114.1694},
         ];
@@ -291,82 +292,7 @@ export default {
     .user-container::-webkit-scrollbar {
       display: none;
     }
-
-    .form-container {
-      width: 100%;
-      background-color: var(--semi-dark);
-      padding: 1rem;
-      flex: 1;
-
-      .input-field {
-        width: 6rem;
-        border-radius: .2rem;
-        outline: none;
-      }
-
-      .submit-base {
-        background-color: var(--light-dark);
-        padding: 1rem;
-        border-radius: 1rem;
-        border: none;
-        color: var(--light);
-      }
-
-      .box {
-        width: 100%;
-        padding: .1rem;
-        background-color: var(--light-dark);
-        border: solid;
-        border-radius: .5rem;
-        border-color: var(--light-light-dark);
-      }
-
-      #file-box {
-        margin-bottom: 1rem;
-
-        input[type=file]::-webkit-file-upload-button {
-          height: 3.5rem;
-          background-color: var(--semi-dark);
-          border: none;
-          color: var(--light);
-          border-radius: .5rem;
-          padding: .6rem;
-          margin-left: .5rem;
-          font-family: var(--fonts);
-        }
-
-        input[type=file] {
-          width: 70%;
-        }
-
-        #file-submit {
-          width: 30%;
-          height: 5rem;
-          border-radius: 0%;
-          background-color: var(--semi-dark);
-        }
-      }
-
-      #text-box {
-        input[type=text] {
-          height: 3rem;
-          width: 70%;
-          background-color: var(--light-dark);
-          color: var(--light);
-          padding-left: .5rem;
-          border: 0rem;
-        }
-
-        #msg-submit {
-          width: 30%;
-          height: 3rem;
-          border-radius: 0%;
-          background-color: var(--semi-dark);
-        }
-      }
-    }
   }
-
   .user-icon-glyph {
     height: 30px;
     width: 30px;
