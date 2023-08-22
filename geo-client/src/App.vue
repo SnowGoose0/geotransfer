@@ -4,6 +4,10 @@ import PeerCard from './components/PeerCard.vue';
 import SelfCard from './components/SelfCard.vue';
 import MessageCard from './components/MessageCard.vue';
 import UploadForm from './components/UploadForm.vue';
+import RotationPage from './components/RotationPage.vue';
+
+import { useOrientation } from './Orientation.js'
+
 import glyphSvg from './assets/user-marker.svg';
 
 import ioClient from 'socket.io-client';
@@ -14,13 +18,15 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyDrA7hO41vHxBIxUewGFoGFJJQpYTsBiLA';
 
 export default {
   components: {
-    PeerCard, SelfCard, MessageCard, UploadForm,
+    PeerCard, SelfCard, MessageCard, UploadForm, RotationPage,
   },
 
   setup() {
     const loader = new Loader({ 
       apiKey: GOOGLE_MAPS_API_KEY ,
     });
+
+    const { isDeviceMobile, isOrientationVertical } = useOrientation();
 
     const mapElement = ref(null);
     const fileInputElement = ref(null);
@@ -208,21 +214,25 @@ export default {
     return {
       selectRecipient,
 
+      isDeviceMobile,
+      isOrientationVertical,
+
       mapElement,
       fileInputElement,
       textInputElement,
+      socket,
       activeUserList,
       selfInfo,
       selectedRecipient,
       selectedMarker,
       receivedMessage,
-      socket,
     }
   },
 }
 </script>
 
 <template>
+  <RotationPage v-if="isDeviceMobile && isOrientationVertical"/>
   <div class="app">
     <MessageCard :message="receivedMessage.message" :sender="receivedMessage.sender"/>
     <div class="map-container">
