@@ -54,9 +54,12 @@ io.on('connection', (socket) => {
 
   socket.on('send-file', (package) => {
     const recipient = package.recipient;
-    const rawFile = package.file;
 
-    io.to(recipient).emit('receive-file', rawFile)
+    io.to(recipient).emit('receive-file', {
+      from: package.sender,
+      file: package.file,
+      fileName: package.fileName
+    });
   });
 
   socket.on('send-message', (package) => {

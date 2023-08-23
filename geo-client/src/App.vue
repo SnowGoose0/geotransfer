@@ -30,30 +30,31 @@ export default {
 
   setup() {
     const loader = new Loader({ 
-      apiKey: GOOGLE_MAPS_API_KEY ,
+      apiKey: GOOGLE_MAPS_API_KEY,
     });
 
     const { isDeviceMobile, isOrientationVertical } = useOrientation();
 
     const mapElement = ref(null);
-    const downloadLinkElement = ref(null);
     const fileInputElement = ref(null);
     const textInputElement = ref(null);
 
     const selectedRecipient = ref(null);
     const selectedMarker = ref(null);
     const receivedMessage = ref({});
+    const receivedFile = ref({});
 
     const userCoordinates = ref({longitude: null, latitude: null});
     const userHashedCoordinates = ref('');
     const activeUserList = ref({});
     const markerUserList = ref({});
     const selfInfo = ref({});
+    const userRequestBusy = ref(false);
 
     const markerWidgets = {};
     let map = null;
 
-    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR);
+    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR_DEV);
 
     const selectRecipient = (user) => {
       if (user === selfInfo.value.id) return;
@@ -155,19 +156,26 @@ export default {
     });
 
     socket.on('receive-file', (fileParcel) => {
-      const fileBlob = new Blob([fileParcel]);
+      if (userRequestBusy.value === true) return;
+
+      const fileBlob = new Blob([fileParcel.file]);
       const dlElement = document.createElement('a');
 
       dlElement.href = URL.createObjectURL(fileBlob);
-      dlElement.download = 'filename.extension';
+      dlElement.download = fileParcel.fileName;
       
-      downloadLinkElement.value = dlElement;
+      receivedFile.value = {
+        from: fileParcel.from,
+        file: fileParcel.file,
+        fileName: fileParcel.fileName,
+        downloadElement: dlElement,
+      };
     });
 
     socket.on('receive-message', (messageParcel) => {
       receivedMessage.value = {
         message: messageParcel.message,
-        sender: activeUserList.value[messageParcel.from],
+        from: activeUserList.value[messageParcel.from],
       }
     });
 
@@ -179,11 +187,11 @@ export default {
 
         const x = [
           {latitude: 22.3193, longitude: 114.1694},
-          {latitude: 23.1291, longitude: 113.2644},
-          {latitude: 22.5429, longitude: 114.0596},
+          // {latitude: 23.1291, longitude: 113.2644},
+          // {latitude: 22.5429, longitude: 114.0596},
 
-          // {latitude: 22.3193, longitude: 114.1694},
-          // {latitude: 22.3193, longitude: 114.1694},
+          {latitude: 22.3193, longitude: 114.1694},
+          {latitude: 22.3193, longitude: 114.1694},
         ];
 
         userCoordinates.value = x[Math.floor((Math.random() * 100)) % 3];
@@ -228,9 +236,10 @@ export default {
       mapElement,
       fileInputElement,
       textInputElement,
-      downloadLinkElement,
+      receivedFile,
       socket,
       activeUserList,
+      userRequestBusy,
       selfInfo,
       selectedRecipient,
       selectedMarker,
@@ -243,8 +252,17 @@ export default {
 <template>
   <RotationPage v-if="isDeviceMobile && isOrientationVertical"/>
   <div class="app">
-    <MessageCard :message="receivedMessage.message" :sender="receivedMessage.sender"/>
-    <FileCard :fileLinkElement="downloadLinkElement" :sender="'Wonhee'" @delete-file-element="downloadLinkElement = null"/>
+    <MessageCard :message="receivedMessage.message" :sender="receivedMessage.from"/>
+    <FileCard 
+      :fileLinkElement="receivedFile.downloadElement" 
+      :fileName="receivedFile.fileName"
+      :sender="receivedFile.from" 
+      @user-request-resolved="() => {
+        receivedFile = {};
+        userRequestBusy = false;
+      }"
+      @user-request-outstanding="userRequestBusy = true"
+    />
     <div class="map-container">
       <div class="map" ref="mapElement"></div>
     </div>

@@ -4,10 +4,11 @@
   export default {
     props: {
       fileLinkElement: Object,
+      fileName: String,
       sender: String,
     },
 
-    emits: ['delete-file-element'],
+    emits: ['user-request-outstanding', 'user-request-resolved'],
 
     setup(props, ctx) {
       const showTransferRequest = ref(false);
@@ -21,7 +22,7 @@
         showTransferRequest.value = false;
         URL.revokeObjectURL(downloadLink.value.href);
 
-        ctx.emit('delete-file-element');
+        ctx.emit('user-request-resolved');
       }
 
       const acceptTransferRequest = () => {
@@ -39,6 +40,7 @@
 
       watch(() => downloadLink.value, (newDownloadLink) => {
         if (newDownloadLink != null) {
+          ctx.emit('user-request-outstanding');
           displayRequestCard();
         }
       });
@@ -72,6 +74,8 @@
   background-color: var(--semi-dark);
   margin: 1rem;
   border-radius: 1rem;
+  border-style: solid;
+  border-color: var(--aquatic);
   position: absolute;
   z-index: 10;
 

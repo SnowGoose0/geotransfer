@@ -48,6 +48,8 @@
   background-color: var(--semi-dark);
   margin: 1rem;
   border-radius: 1rem;
+  border-style: solid;
+  border-color: var(--aquatic);
   position: absolute;
   z-index: 10;
 

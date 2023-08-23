@@ -12,7 +12,7 @@ export default {
 
   setup(props) {
     const fileInputElement = ref(null);
-    const textInput = ref(null);
+    const textInputElement = ref(null);
     const textInputCharCount = ref(MAX_MESSAGE_LENGTH);
     const fileList = ref([]);
 
@@ -23,7 +23,7 @@ export default {
     const sendMessage = () => {
       if (textInputCharCount.value < 0) return;
 
-      const messageContent = textInput.value;
+      const messageContent = textInputElement.value;
 
       if (messageContent == "" || messageContent == null) return;
 
@@ -33,7 +33,7 @@ export default {
         message: messageContent,
       });
       
-      textInput.value = "";
+      textInputElement.value = "";
       textInputCharCount.value = MAX_MESSAGE_LENGTH;
     }
 
@@ -41,19 +41,26 @@ export default {
       const file = fileList.value[0];
 
       if (file == undefined) return;
+      if (recipient.value == null) return;
 
       socket.emit("send-file", {
+        sender: selfInfo.value.id,
         recipient: recipient.value,
         rawFile: file,
+        fileName: file.name,
       });
+
+      fileInputElement.value.value = '';
+      fileInputElement.value.className = 'file';
     }
 
     const stageFiles = () => {
       fileList.value = fileInputElement.value.files;
+      fileInputElement.value.className = 'file-staged';
     }
 
     const stageText = () => {
-      const textInputLength = textInput.value.length;
+      const textInputLength = textInputElement.value.length;
       textInputCharCount.value = MAX_MESSAGE_LENGTH - textInputLength;
     }
 
@@ -73,7 +80,7 @@ export default {
       stageFiles,
       stageText,
       fileInputElement,
-      textInput,
+      textInputElement,
       textInputCharCount,
     }
   }
@@ -91,7 +98,7 @@ export default {
 
     <form @submit.prevent="sendMessage">
       <div class="box" id="text-box">
-        <input v-model="textInput" @input="stageText" class="input-field text" placeholder="Send a message">
+        <input v-model="textInputElement" @input="stageText" class="input-field text" placeholder="Send a message">
         <h6 class="character-counter-reg" id="charcnt">
           {{ textInputCharCount }}
         </h6>
@@ -140,13 +147,21 @@ export default {
         border: none;
         color: var(--light);
         border-radius: .5rem;
-        padding: .6rem;
+        padding: 1rem;
         margin-left: .5rem;
         font-family: var(--fonts);
       }
 
       input[type=file] {
         width: 70%;
+      }
+
+      .file {
+        color: rgba(0, 0, 0, 0);
+      }
+
+      .file-staged {
+        color: var(--light-light-dark);
       }
 
       #file-submit {
