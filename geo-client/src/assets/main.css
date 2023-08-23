@@ -5,9 +5,11 @@
   --semi-dark: rgb(15, 15, 15);
   --light-dark: rgb(22, 22, 22);
   --light-light-dark: rgb(75, 75, 75);
-  --aquatic: rgb(0, 166, 207);
+  --aquatic: rgb(14, 215, 255);
+  --orange: rgb(255, 164, 37);
   --light: rgb(255, 255, 255);
-  --error: rgb(255, 61, 61);
+  --error: rgb(234, 68, 53);
+  --red: rgb(234, 68, 53);
 
   --fonts: 'Roboto Mono', Helvetica, 'Courier New', monospace;
 }

@@ -13,7 +13,6 @@
     setup(props, ctx) {
       const showTransferRequest = ref(false);
       const downloadLink = toRef(props, 'fileLinkElement');
-      const fileName = props.fileName;
 
       const displayRequestCard = () => {
         showTransferRequest.value = true;
@@ -50,7 +49,6 @@
         acceptTransferRequest,
         rejectTransferRequest,
         showTransferRequest,
-        fileName,
       }
     }
   }
@@ -61,7 +59,7 @@
     <h3 class="pop-up-message">
       <span class="sender">
         {{ sender }}
-      </span> wants to share file(s) with you: {{ fileName }}</h3>
+      </span> wants to share '{{ fileName }}' with you</h3>
     <button class="pop-up-button accept" @click="acceptTransferRequest">Accept</button>
     <button class="pop-up-button reject" @click="rejectTransferRequest">Reject</button>
   </div>
@@ -69,7 +67,7 @@
 
 <style lang="scss" scoped>
 .pop-up-container {
-  // display: flex;
+  align-self: end;
   width: 25%;
   max-height: 50%;
   padding: 1rem;
@@ -77,7 +75,7 @@
   margin: 1rem;
   border-radius: 1rem;
   border-style: solid;
-  border-color: var(--aquatic);
+  border-color: var(--orange);
   position: absolute;
   z-index: 10;
 
@@ -85,7 +83,7 @@
     padding: .5rem;
     
     .sender {
-      color: var(--aquatic);
+      color: var(--orange);
     }
   }
 
