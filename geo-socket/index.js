@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const http = require('http');
+const fs = require('fs');
 const ioSocket = require('socket.io')
 const spareIdentifiers = require("./res/id.json");
 
@@ -54,11 +55,21 @@ io.on('connection', (socket) => {
 
   socket.on('send-file', (package) => {
     const recipient = package.recipient;
+    const cacheFileName = package.sender
+      .concat(package.recipient)
+      .concat(package.fileName)
+    ;
+
+    const cacheFilePath = './cache/'.concat(cacheFileName);
+
+    fs.writeFile(cacheFilePath, package.rawFile, () => {
+      console.log('Server: file is saved')
+    });
 
     io.to(recipient).emit('receive-file', {
       from: package.sender,
-      file: package.file,
-      fileName: package.fileName
+      file: package.rawFile,
+      fileName: package.fileName,
     });
   });
 

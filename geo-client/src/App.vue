@@ -165,7 +165,7 @@ export default {
       dlElement.download = fileParcel.fileName;
       
       receivedFile.value = {
-        from: fileParcel.from,
+        from: activeUserList.value[fileParcel.from],
         file: fileParcel.file,
         fileName: fileParcel.fileName,
         downloadElement: dlElement,

@@ -40,18 +40,24 @@ export default {
     const sendFiles = () => {
       const file = fileList.value[0];
 
-      if (file == undefined) return;
       if (recipient.value == null) return;
 
-      socket.emit("send-file", {
-        sender: selfInfo.value.id,
-        recipient: recipient.value,
-        rawFile: file,
-        fileName: file.name,
-      });
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        socket.emit("send-file", {
+          sender: selfInfo.value.id,
+          recipient: recipient.value,
+          rawFile: reader.result,
+          fileName: file.name,
+        });
 
-      fileInputElement.value.value = '';
-      fileInputElement.value.className = 'file';
+        fileInputElement.value.value = '';
+        fileInputElement.value.className = 'file';   
+      })
+
+      if (file) {
+        reader.readAsArrayBuffer(file);
+      }
     }
 
     const stageFiles = () => {

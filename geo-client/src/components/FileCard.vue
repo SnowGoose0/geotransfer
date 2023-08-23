@@ -13,6 +13,7 @@
     setup(props, ctx) {
       const showTransferRequest = ref(false);
       const downloadLink = toRef(props, 'fileLinkElement');
+      const fileName = props.fileName;
 
       const displayRequestCard = () => {
         showTransferRequest.value = true;
@@ -49,6 +50,7 @@
         acceptTransferRequest,
         rejectTransferRequest,
         showTransferRequest,
+        fileName,
       }
     }
   }
@@ -59,7 +61,7 @@
     <h3 class="pop-up-message">
       <span class="sender">
         {{ sender }}
-      </span> wants to share file(s) with you</h3>
+      </span> wants to share file(s) with you: {{ fileName }}</h3>
     <button class="pop-up-button accept" @click="acceptTransferRequest">Accept</button>
     <button class="pop-up-button reject" @click="rejectTransferRequest">Reject</button>
   </div>
@@ -93,6 +95,10 @@
     border-radius: 1rem;
     border: none;
     color: var(--light);
+  }
+
+  .reject {
+    margin-left: 1rem;
   }
 }
 </style>
