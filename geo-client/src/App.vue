@@ -61,6 +61,26 @@ export default {
       selectedRecipient.value = user;
     }
 
+    const roundCoordinates = (coords) => {
+      const roundFloat = (number) => {
+        const roundedNumber = parseFloat(number.toFixed(3));
+        const bottom = (roundedNumber * 1000) % 10;
+
+        if (bottom === 0) {
+          return roundedNumber + 0.001;
+        }
+
+        return roundedNumber;
+      }
+      const truncLongitude = roundFloat(coords.longitude);
+      const truncLatitude = roundFloat(coords.latitude);
+
+      return {
+        longitude: truncLongitude,
+        latitude: truncLatitude,
+      }
+    }
+
     const hashCoordinates = (coords) => {
       return coords.longitude.toString() + coords.latitude.toString();
     }
@@ -181,28 +201,25 @@ export default {
 
     onMounted(async () => {
       try {
-        // const position = await new Promise((resolve, reject) => {
-        //   navigator.geolocation.getCurrentPosition(resolve, reject);
-        // });
+        await loader.load();
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
 
-        const x = [
-          {latitude: 22.3193, longitude: 114.1694},
-          // {latitude: 23.1291, longitude: 113.2644},
-          // {latitude: 22.5429, longitude: 114.0596},
+        // const x = [
+        //   {latitude: 22.3193, longitude: 114.1694},
+        //   // {latitude: 23.1291, longitude: 113.2644},
+        //   // {latitude: 22.5429, longitude: 114.0596},
 
-          {latitude: 22.3193, longitude: 114.1694},
-          {latitude: 22.3193, longitude: 114.1694},
-        ];
+        //   {latitude: 22.3193, longitude: 114.1694},
+        //   {latitude: 22.3193, longitude: 114.1694},
+        // ];
+        // userCoordinates.value = x[Math.floor((Math.random() * 100)) % 3];
 
-        userCoordinates.value = x[Math.floor((Math.random() * 100)) % 3];
+        userCoordinates.value = roundCoordinates(position.coords);
         userHashedCoordinates.value = hashCoordinates(userCoordinates.value);
 
-        // coordinates.value = position.coords;
-        // console.log(coordinates.value)
-
         socket.emit('init-location', userHashedCoordinates.value);
-
-        await loader.load();
 
         const { Map } = await google.maps.importLibrary("maps");
 
