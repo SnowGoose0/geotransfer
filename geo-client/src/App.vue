@@ -206,16 +206,6 @@ export default {
           navigator.geolocation.getCurrentPosition(resolve, reject);
         });
 
-        // const x = [
-        //   {latitude: 22.3193, longitude: 114.1694},
-        //   // {latitude: 23.1291, longitude: 113.2644},
-        //   // {latitude: 22.5429, longitude: 114.0596},
-
-        //   {latitude: 22.3193, longitude: 114.1694},
-        //   {latitude: 22.3193, longitude: 114.1694},
-        // ];
-        // userCoordinates.value = x[Math.floor((Math.random() * 100)) % 3];
-
         userCoordinates.value = roundCoordinates(position.coords);
         userHashedCoordinates.value = hashCoordinates(userCoordinates.value);
 
@@ -235,8 +225,6 @@ export default {
           scaleControl: true,
           rotateControl: false,
         });
-
-        // socket.emit('init-location', userHashedCoordinates.value);
 
       } catch (error) {
         console.error('Error with geolocation services or library loading:', error);

@@ -7,10 +7,11 @@ const spareIdentifiers = require("./res/id.json");
 
 const app = express();
 const server = http.createServer(app);
-const portNumber = 8080;
 
-const users = {};
-const markers = {};
+
+const PORT_NUMBER = 8080;
+const USERS = {};
+const MARKERS = {};
 
 app.get('/', (req, res) => {
   res.write('<h1>To err is human</h1>')
@@ -33,23 +34,23 @@ io.on('connection', (socket) => {
 
   socket.on('init-location', (coords) => {
     console.log('Socket: a user has initialized location')
-    if (markers[coords] === undefined)  {
-      markers[coords] = [];
+    if (MARKERS[coords] === undefined)  {
+      MARKERS[coords] = [];
     }
 
     markerIndex = coords;
-    markers[coords].push(socket.id);
-    users[socket.id] = username;
+    MARKERS[coords].push(socket.id);
+    USERS[socket.id] = username;
 
     socket.emit('init-user', {
       self: socket.id,
-      list: users,
-      markers: markers,
+      list: USERS,
+      markers: MARKERS,
     });
 
     socket.broadcast.emit('update-users', {
-      list: users,
-      markers: markers,
+      list: USERS,
+      markers: MARKERS,
     });
   });
 
@@ -83,30 +84,30 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    delete users[socket.id];
+    delete USERS[socket.id];
 
-    if (markers[markerIndex] !== undefined) {
-      const index = markers[markerIndex].indexOf(socket.id);
+    if (MARKERS[markerIndex] !== undefined) {
+      const index = MARKERS[markerIndex].indexOf(socket.id);
 
       if (index >= 0) {
-        markers[markerIndex].splice(index, 1);
+        MARKERS[markerIndex].splice(index, 1);
       }
     }
 
-    if (markers[markerIndex].length === 0) {
+    if (MARKERS[markerIndex].length === 0) {
       console.log('Server: a marker has been cleared')
-      delete markers[markerIndex];
+      delete MARKERS[markerIndex];
     }
     
     spareIdentifiers.names.push(username);
 
     socket.broadcast.emit('update-users', {
-      list: users,
-      markers: markers,
+      list: USERS,
+      markers: MARKERS,
     });
   });
 });
 
-server.listen(portNumber, () => {
-  console.log(`Server: listening on port ${portNumber}`);
+server.listen(PORT_NUMBER, () => {
+  console.log(`Server: listening on port ${PORT_NUMBER}`);
 });
