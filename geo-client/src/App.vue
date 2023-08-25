@@ -281,7 +281,7 @@ export default {
           :uname="activeUserList[userId]"
           @click="selectRecipient(userId)"
           :style="{ backgroundColor: selectedRecipient === userId && selectedRecipient !== selfInfo.userId
-            ? 'var(--red)' 
+            ? 'rgb(234, 68, 53)' 
             : 'var(--semi-dark)' }"
         />
 

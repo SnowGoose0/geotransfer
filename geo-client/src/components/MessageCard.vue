@@ -50,6 +50,7 @@
   border-radius: 1rem;
   border-style: solid;
   border-color: var(--aquatic);
+  border-width: 0.025rem;
   position: absolute;
   z-index: 10;
 

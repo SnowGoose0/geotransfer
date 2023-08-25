@@ -140,6 +140,7 @@ export default {
       padding: .1rem;
       background-color: var(--light-dark);
       border: solid;
+      border-width: 0.025rem;
       border-radius: .5rem;
       border-color: var(--light-light-dark);
     }
