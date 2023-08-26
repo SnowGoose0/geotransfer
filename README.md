@@ -1,7 +1,5 @@
 # GeoTransfer
-[GeoTransfer](https://dsend-web.web.app/) is a location-based file sharing application that enables users to discover and connect with each other on a map. 
-
-A user can discover nearby users and send/receive files and messages from anonymous users who are discoverable via an alias.
+[GeoTransfer](https://dsend-web.web.app/) is a location-based file sharing application that enables users to discover and connect with each other on a map. A user can discover nearby users and send/receive files and messages from anonymous users who are discoverable via an alias.
 
 Connect onto GeoTransfer here: https://dsend-web.web.app/
 
