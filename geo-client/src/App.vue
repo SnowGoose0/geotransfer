@@ -16,8 +16,6 @@ import glyphSvg from './assets/user-marker.svg';
 
 import ioClient from 'socket.io-client';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyDrA7hO41vHxBIxUewGFoGFJJQpYTsBiLA';
-
 export default {
   components: {
     PeerCard, 
@@ -30,7 +28,7 @@ export default {
 
   setup() {
     const loader = new Loader({ 
-      apiKey: GOOGLE_MAPS_API_KEY,
+      apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
     });
 
     const { isDeviceMobile, isOrientationVertical } = useOrientation();
@@ -54,7 +52,7 @@ export default {
     const markerWidgets = {};
     let map = null;
 
-    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR_DEV);
+    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR);
 
     const selectRecipient = (user) => {
       if (user === selfInfo.value.id) return;

@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 
 
-const PORT_NUMBER = 8080;
+const PORT = process.env.PORT || 8080;
 const USERS = {};
 const MARKERS = {};
 
@@ -108,6 +108,6 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(PORT_NUMBER, () => {
-  console.log(`Server: listening on port ${PORT_NUMBER}`);
+server.listen(PORT, () => {
+  console.log(`Server: listening on port ${PORT}`);
 });
