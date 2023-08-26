@@ -61,11 +61,13 @@ io.on('connection', (socket) => {
       .concat(package.fileName)
     ;
 
+    /*
     const cacheFilePath = './cache/'.concat(cacheFileName);
 
     fs.writeFile(cacheFilePath, package.rawFile, () => {
-      console.log('Server: file is saved')
-    });
+      console.log('Server: file is saved');
+    }); 
+    */
 
     io.to(recipient).emit('receive-file', {
       from: package.sender,
