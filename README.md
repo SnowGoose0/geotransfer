@@ -1,25 +1,28 @@
 # GeoTransfer
-```
-GeoTransfer is a location-based file sharing application that enables users to discover and connect with each other on a map. 
+[GeoTransfer](https://dsend-web.web.app/) is a location-based file sharing application that enables users to discover and connect with each other on a map. 
 
 A user can discover nearby users and send/receive files and messages from anonymous users who are discoverable via an alias.
-```
+
+Connect onto GeoTransfer here: https://dsend-web.web.app/
+
+Note: the server will take a couple seconds to start up if inactive.
+
+# GeoTransfer Tech-Stack
+- `front-end`: vite + vue.js, google-maps api, socket.io-client
+- `back-end`: node.js, express.js, socket.io
+- `deployment/host`: firebase hosting (front-end), render web-services (back-end)
+- `language/tools`: javascript, html, scss, git
 
 # How to use GeoTransfer?
 ## Map navigation
 - pan: `left/right/mw click + drag`
 - zoom: `mw scroll`
-- ←	move left
-- →	move right
-- ↑	move up
-- ↓	move down
-- Home	Jump left by 75%
-- End	Jump right by 75%
-- Page Up	Jump up by 75%
-- Page Down	Jump down by 75%
 
 ## Discover connected users
-1. 
+- your alias is displayed on the top right
+- users can be discovered by clicking on the `pins` on the map
+- a `pin` may consist of `multiple users` (that are close together)
+- the list of users of an associated pin are displayed on the right column
 
 ## Sending a file/message
 1. click on a `pin` on the map
@@ -36,7 +39,7 @@ A user can discover nearby users and send/receive files and messages from anonym
 1. a pop-up will be displayed showing the name of the `sender` and the `message`
 2. click 'close' to close the message pop-up
 
-# Installation
+# Local installation
 Note: You will have to configure a few environment variables on your own.
 
 1. clone the repository from GitHub
@@ -53,9 +56,8 @@ Note: You will have to configure a few environment variables on your own.
 
 3. configure and run back-end
     ```sh
+    # default port: 8080
     $ cd geo-socket
     $ npm install
     $ node index.js
-
-    # default port: 8080
     ```
