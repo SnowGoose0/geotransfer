@@ -52,7 +52,7 @@ export default {
     const markerWidgets = {};
     let map = null;
 
-    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR);
+    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR_DEV);
 
     const selectRecipient = (user) => {
       if (user === selfInfo.value.id) return;
@@ -278,9 +278,12 @@ export default {
           v-for="userId in selectedMarker"
           :uname="activeUserList[userId]"
           @click="selectRecipient(userId)"
-          :style="{ backgroundColor: selectedRecipient === userId && selectedRecipient !== selfInfo.userId
+          :style="{ 
+            backgroundColor: selectedRecipient === userId 
+            && selectedRecipient !== selfInfo.userId
             ? 'rgb(234, 68, 53)' 
-            : 'var(--semi-dark)' }"
+            : 'var(--semi-dark)' 
+            }"
         />
 
       </div>
@@ -322,12 +325,6 @@ export default {
       flex: 5;
       overflow-y: scroll;
       overflow-x: hidden;
-
-      .user-item {
-        margin-top: .5rem;
-        border-radius: .5rem;
-        background-color: var(--semi-dark);
-      }
     }
 
     .user-container::-webkit-scrollbar {

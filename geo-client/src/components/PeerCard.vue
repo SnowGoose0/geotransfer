@@ -16,7 +16,8 @@ export default {
   .user {
     text-align: center;
     margin: .5rem 1rem .5rem 1rem;
-    border-radius: .5rem;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
 
     h3 {
       padding: .5rem;
