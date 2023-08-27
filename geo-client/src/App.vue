@@ -52,7 +52,7 @@ export default {
     const markerWidgets = {};
     let map = null;
 
-    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR_DEV);
+    const socket = ioClient(import.meta.env.VITE_SOCKET_HOST_ADDR);
 
     const selectRecipient = (user) => {
       if (user === selfInfo.value.id) return;
