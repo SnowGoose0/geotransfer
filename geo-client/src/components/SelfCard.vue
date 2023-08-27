@@ -18,11 +18,11 @@ export default {
     text-align: center;
     background-color: var(--semi-dark);
     margin-bottom: 1rem;
-    padding: 1.5rem;
+    padding: 2rem;
 
     .identify-message {
       color: var(--light-light-dark);
-      margin-bottom: 0.5rem;
+      margin-bottom: .75rem;
     }
 
     .self {
