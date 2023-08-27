@@ -23,10 +23,13 @@ export default {
     .identify-message {
       color: var(--light-light-dark);
       margin-bottom: .75rem;
+      cursor: pointer;
     }
 
     .self {
       color: var(--light);
+      text-shadow: 1px 1px var(--green);
+      cursor: pointer;
     }
   }
 </style>

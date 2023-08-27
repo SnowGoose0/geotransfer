@@ -2,14 +2,16 @@
 
 :root {
   --darkest: rgb(5, 5, 5);
-  --semi-dark: rgb(15, 15, 15);
-  --light-dark: rgb(24, 24, 24);
+  --semi-dark: rgb(10, 10, 10);
+  --light-dark: rgb(20, 22, 25);
   --light-light-dark: rgb(75, 75, 75);
   --aquatic: rgb(14, 215, 255);
+  --dark-aquatic: rgb(0, 133, 160);
+  --dark-aquatic-hover: rgb(3, 71, 85);
   --orange: rgb(255, 164, 37);
   --light: rgb(255, 255, 255);
   --error: rgb(234, 68, 53);
-  --red: rgb(234, 68, 53);
+  --green: rgb(108, 169, 101);
 
   --fonts: 'Roboto Mono', Helvetica, 'Courier New', monospace;
 }

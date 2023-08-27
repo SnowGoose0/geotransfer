@@ -272,20 +272,14 @@ export default {
     <div class="operation-container">
       <div class="user-container">
         <SelfCard :selfName="selfInfo.name"/>
-        
         <PeerCard 
-          class="user-items" 
           v-for="userId in selectedMarker"
-          :uname="activeUserList[userId]"
+          :userName="activeUserList[userId]"
+          :uId="userId"
+          :selfId="selfInfo.id"
+          :isSelf="userId == selfInfo.id"
           @click="selectRecipient(userId)"
-          :style="{ 
-            backgroundColor: selectedRecipient === userId 
-            && selectedRecipient !== selfInfo.userId
-            ? 'rgb(234, 68, 53)' 
-            : 'var(--semi-dark)' 
-            }"
         />
-
       </div>
       <UploadForm
         :socket="socket"
@@ -313,7 +307,6 @@ export default {
 
   .operation-container {
     display: flex;
-    background-color: var(--light-dark);
     flex-direction: column;
     flex: 1;
     align-content: flex-end;
@@ -321,6 +314,7 @@ export default {
     .user-container {
       display: flex;
       flex-direction: column;
+      background-color: var(--light-dark);
       width: 100%;
       flex: 5;
       overflow-y: scroll;
