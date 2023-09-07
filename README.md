@@ -5,7 +5,7 @@ Connect onto GeoTransfer here: https://dsend-web.web.app/
 
 Note: the server will take a couple seconds to start up if inactive.
 
-# GeoTransfer Tech-Stack
+# GeoTransfer Stack
 - `front-end`: vite + vue.js, google-maps api, socket.io-client
 - `back-end`: node.js, express.js, socket.io
 - `deployment/host`: firebase hosting (front-end), render web-services (back-end)
